@@ -12,7 +12,13 @@ int main() {
     sf::RenderWindow window(sf::VideoMode({800, 600}), "Snake Test");
 
     sf::RectangleShape snakeHead(sf::Vector2f({20.f, 20.f}));
-    snakeHead.setFillColor(sf::Color::Green);
+    sf::RectangleShape snakeBody(sf::Vector2f({20.f, 20.f}));
+    snakeHead.setFillColor(sf::Color(0, 255, 0));
+    snakeHead.setOutlineThickness(1.f);
+    snakeHead.setOutlineColor(sf::Color::Black);
+
+    snakeBody.setFillColor(sf::Color(0, 170, 0));
+    snakeBody.setPosition({80.f, 100.f});
     float x = 100.f;
     float y = 100.f;
     float cellsize = 20.f;
@@ -25,7 +31,6 @@ int main() {
                 window.close();
             }
         }
-
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left) && direction != Direction::Right) {
             direction = Direction::Left;
         } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right) && direction != Direction::Left) {
@@ -37,6 +42,8 @@ int main() {
         }
         
         if (clock.getElapsedTime().asSeconds() > 0.15f) {
+            float oldX = x;
+            float oldY = y;
             if (direction == Direction::Left && x > 0) {
                 x -= cellsize;
             } else if (direction == Direction::Right && x < window.getSize().x - cellsize) {
@@ -46,12 +53,13 @@ int main() {
             } else if (direction == Direction::Down && y < window.getSize().y - cellsize) {
                 y += cellsize;
             }
+            snakeBody.setPosition({oldX, oldY});
             clock.restart();
         }
-
         snakeHead.setPosition({x, y});
         window.clear(sf::Color::Black);
         window.draw(snakeHead);
+        window.draw(snakeBody);
         window.display();
     }
 
