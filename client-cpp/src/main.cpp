@@ -1,13 +1,35 @@
+/**
+ * @file main.cpp
+ * @brief Simple Snake game client implementation using SFML
+ *
+ * This file contains the main entry point for a basic Snake game.
+ * The game features a snake that moves around the screen, controlled by arrow keys,
+ * with a simple head and body representation.
+ */
+
 #include <SFML/Graphics.hpp>
 #include <optional>
 #include <iostream>
+
+/**
+ * @enum Direction
+ * @brief Represents the possible movement directions for the snake
+ */
 enum class Direction {
-    Left, 
-    Right,
-    Up,
-    Down
+    Left,   ///< Move left
+    Right,  ///< Move right
+    Up,     ///< Move up
+    Down    ///< Move down
 };
 
+/**
+ * @brief Main entry point for the Snake game application
+ *
+ * Initializes the game window, sets up the snake graphics, and runs the main game loop.
+ * The game loop handles user input, updates snake position, and renders the graphics.
+ *
+ * @return 0 on successful execution
+ */
 int main() {
     sf::RenderWindow window(sf::VideoMode({800, 600}), "Snake Test");
 
@@ -19,6 +41,7 @@ int main() {
 
     snakeBody.setFillColor(sf::Color(0, 170, 0));
     snakeBody.setPosition({80.f, 100.f});
+
     float x = 100.f;
     float y = 100.f;
     float cellsize = 20.f;
@@ -31,6 +54,9 @@ int main() {
                 window.close();
             }
         }
+
+        // Handle keyboard input for direction changes
+        // Prevent snake from reversing into itself
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left) && direction != Direction::Right) {
             direction = Direction::Left;
         } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right) && direction != Direction::Left) {
@@ -40,10 +66,11 @@ int main() {
         } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down) && direction != Direction::Up) {
             direction = Direction::Down;
         }
-        
+        // Movement logic - update snake position every 0.15 seconds
         if (clock.getElapsedTime().asSeconds() > 0.15f) {
             float oldX = x;
             float oldY = y;
+
             if (direction == Direction::Left && x > 0) {
                 x -= cellsize;
             } else if (direction == Direction::Right && x < window.getSize().x - cellsize) {
@@ -53,9 +80,12 @@ int main() {
             } else if (direction == Direction::Down && y < window.getSize().y - cellsize) {
                 y += cellsize;
             }
+
             snakeBody.setPosition({oldX, oldY});
             clock.restart();
         }
+
+        // Update head position and render everything
         snakeHead.setPosition({x, y});
         window.clear(sf::Color::Black);
         window.draw(snakeHead);
